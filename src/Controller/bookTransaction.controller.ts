@@ -478,7 +478,6 @@ export const getDashboardInfo = async (req: Request, res: Response) => {
       where: {
         NepaliDate: {
           gte: bsStartDate,
-          lte: bsEndDate,
         },
         AND: {
           Status: {
