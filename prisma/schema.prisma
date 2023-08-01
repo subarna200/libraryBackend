@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  User_Id         Int       @id @default(autoincrement())
+  First_Name      String
+  Last_Name       String
+  Email           String    @unique
+  Password        String
+  photo           String?
+  CreatedAt       DateTime  @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  UpdatedAt       DateTime? @updatedAt @db.DateTime()
+  photo_public_id String?
+}
+
+model Students {
+  Student_Id      Int               @id @default(autoincrement())
+  First_Name      String
+  Last_Name       String
+  Email           String            @unique
+  Password        String?
+  photo           String?
+  photo_public_id String?
+  Academics       String
+  isEmailVerified Int               @default(0)
+  OTP             Int?
+  OTP_EXPIRY      String?
+  CreatedAt       DateTime          @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  UpdatedAt       DateTime?         @updatedAt @db.DateTime()
+  BookTransaction BookTransaction[]
+}
+
+model Books {
+  Book_Id         Int               @id @default(autoincrement())
+  Book_Name       String
+  Author_Name     String
+  Publication     String
+  Published_Date  String
+  Quantity        Int
+  CreatedAt       DateTime          @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  UpdatedAt       DateTime?         @updatedAt @db.DateTime()
+  BookTransaction BookTransaction[]
+}
+
+model BookTransaction {
+  Id              Int               @id @default(autoincrement())
+  NepaliDate      String
+  Book            Books             @relation(fields: [Book_Id], references: [Book_Id])
+  Student         Students          @relation(fields: [Student_Id], references: [Student_Id])
+  Status          String
+  Due_Date        String
+  Fine_Amt        Int               @default(0)
+  returnedAt      String?
+  createdAt       DateTime          @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  UpdatedAt       DateTime?         @updatedAt @db.DateTime()
+  Book_Id         Int
+  Student_Id      Int
+  FineTransaction FineTransaction[]
+}
+
+model FineTransaction {
+  Id              Int             @id @default(autoincrement())
+  NepaliDate      String
+  Amount_Recieved Int
+  TransactionId   Int
+  BookTransaction BookTransaction @relation(fields: [TransactionId], references: [Id])
+  createdAt       DateTime        @default(dbgenerated("CURRENT_TIMESTAMP")) @db.DateTime()
+  UpdatedAt       DateTime?       @updatedAt @db.DateTime()
+}
